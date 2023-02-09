@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 public class SocksServiceImpl implements SocksService {
 
     final private FileSocksService fileSocksService;
-    private static Integer id=0;
+    private static Integer id = 0;
 
     private static List<Socks> socksList = new LinkedList<>();
 
@@ -36,13 +36,26 @@ public class SocksServiceImpl implements SocksService {
 
     @Override
     public Socks addNewSocks(Socks socks) {
-        if (socks.getSize()!=null && socks.getColors()!=null && socks.getCotton() > 0) {
+        if (socks.getSize() != null && socks.getColors() != null && socks.getCotton() > 0) {
             socksList.add(socks);
             saveToFile();
         }
         return socks;
     }
+    @Override
+    public List<Socks> deleteSocks(Integer size, String colors, Integer cotton, Integer quantity) {
 
+        List<Socks> collect = socksList.stream()
+                .filter(socks -> socks.getSize().size.equals(size) && socks.getCotton().equals(cotton))
+                .filter(socks -> socks.getColors().colors.equals(colors))
+                .filter(socks -> socks.getQuantity() >= (quantity)).toList();
+
+        if (collect.isEmpty()) {
+            socksList.stream().map((socks) -> socks.getQuantity()-quantity).collect(Collectors.toList());
+            saveToFile();
+        }
+        return collect;
+    }
 
     @Override
     public Collection<Socks> getChecklistSocks() {
@@ -62,15 +75,37 @@ public class SocksServiceImpl implements SocksService {
     }
 
     @Override
-    public List<Socks>  getQuantitySocks(Integer size, String colors, Integer cotton) {
+    public List<Socks> getQuantitySocksMinCotton(Integer size, String colors, Integer cotton) {
 
         List<Socks> collect = socksList.stream()
-                .filter(socks -> socks.getSize().size.equals(size) && socks.getCotton()>=cotton)
+                .filter(socks -> socks.getSize().size.equals(size) && socks.getCotton() >= cotton)
                 .filter(socks -> socks.getColors().colors.equals(colors))
                 .collect(Collectors.toList());
         return collect;
 
     }
+
+    @Override
+    public List<Socks> getQuantitySocksMaxCotton(Integer size, String colors, Integer cotton) {
+
+        List<Socks> collect = socksList.stream()
+                .filter(socks -> socks.getSize().size.equals(size) && socks.getCotton() <= cotton)
+                .filter(socks -> socks.getColors().colors.equals(colors))
+                .collect(Collectors.toList());
+        return collect;
+
+    }
+
+    @Override
+    public Integer getQuantitySocksSize(Integer size, String colors, Integer cotton) {
+        Integer collect = socksList.stream()
+                .filter(socks -> socks.getSize().size.equals(size) && socks.getCotton() >= cotton && socks.getColors().colors.equals(colors))
+                .map(socks -> socks.getQuantity())
+                .reduce((q1, q2) -> q1 + q2)
+                .get();
+        return collect;
+    }
+
     @Override
     public Path createSocks() throws IOException {
 
@@ -84,6 +119,7 @@ public class SocksServiceImpl implements SocksService {
         }
         return path;
     }
+
     private void saveToFile() {
         try {
             String json = new ObjectMapper().writeValueAsString(socksList);
@@ -93,7 +129,7 @@ public class SocksServiceImpl implements SocksService {
         }
     }
 
-    private void readFromFile() throws FileProcessingException{
+    private void readFromFile() throws FileProcessingException {
         String json = fileSocksService.readerFromFile();
         try {
             socksList = new ObjectMapper().readValue(json, new TypeReference<LinkedList<Socks>>() {

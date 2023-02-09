@@ -1,1 +1,14 @@
-[{"colors":"WHITE","size":"S","cotton":50,"quantity":10},{"colors":"PINK","size":"M","cotton":50,"quantity":10},{"colors":"BLUE","size":"L","cotton":50,"quantity":20}]
+[
+  {
+    "colors": "WHITE",
+    "size": "S",
+    "cotton": 50,
+    "quantity": 30
+  },
+  {
+    "colors": "RED",
+    "size": "S",
+    "cotton": 50,
+    "quantity": 25
+  }
+]

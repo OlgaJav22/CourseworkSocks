@@ -12,9 +12,15 @@ public interface SocksService {
 
     Socks addNewSocks(Socks socks);
 
+    List<Socks> deleteSocks(Integer size, String colors, Integer cotton, Integer quantity);
+
     Collection<Socks> getChecklistSocks();
 
-    List<Socks> getQuantitySocks(Integer size, String colors, Integer cotton);
+    List<Socks>  getQuantitySocksMinCotton(Integer size, String colors, Integer cotton);
+
+    List<Socks>  getQuantitySocksMaxCotton(Integer size, String colors, Integer cotton);
+
+    Integer getQuantitySocksSize(Integer size, String colors, Integer cotton);
 
     Path createSocks() throws IOException;
 }
