@@ -1,0 +1,20 @@
+[
+  {
+    "colors": "WHITE",
+    "size": "S",
+    "cotton": 90,
+    "quantity": 10
+  },
+  {
+    "colors": "WHITE",
+    "size": "M",
+    "cotton": 90,
+    "quantity": 10
+  },
+  {
+    "colors": "PINK",
+    "size": "M",
+    "cotton": 90,
+    "quantity": 10
+  }
+]
