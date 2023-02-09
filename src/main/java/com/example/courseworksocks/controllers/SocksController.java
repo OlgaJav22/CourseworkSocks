@@ -86,10 +86,13 @@ public class SocksController {
         return new ResponseEntity<>(total, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/faulty")
+    @DeleteMapping("/faulty{size}")
     @Operation(summary = "Удаление бракованного товара", description = "вводим необходимые данные: размер, цвет, состав, количество")
-    public ResponseEntity<Void> deleteSocks(@PathVariable Integer size, @PathVariable String colors, Integer cotton, Integer quantity) {
-        List<Socks> socksList = socksService.deleteSocks(size, colors, cotton, quantity);
+    public ResponseEntity<Void> deleteSocks(@PathVariable @RequestParam(name = "Размер:") Integer size1,
+                                            @PathVariable @RequestParam(name = "Цвет") String colors1,
+                                            @PathVariable @RequestParam(name = "% хлопка") Integer cotton1,
+                                            @PathVariable @RequestParam(name = "Количество товара") Integer quantity1) {
+        List<Socks> socksList = socksService.deleteSocks(size1, colors1, cotton1, quantity1);
         if (socksList.isEmpty()) {
             return ResponseEntity.ok().build();
         }
