@@ -51,7 +51,9 @@ public class SocksController {
 
     @GetMapping("/{size}")
     @Operation(summary = "Поиск нужного товара", description = "вводим необходимые данные: размер, цвет, состав")
-    public ResponseEntity<Object> getQuantitySocks(@PathVariable Integer size, @PathVariable String colors, @PathVariable Integer cotton) {
+    public ResponseEntity<Object> getQuantitySocks(@PathVariable @RequestParam(name = "Размер: ") Integer size,
+                                                   @PathVariable @RequestParam(name = "Цвет:") String colors,
+                                                   @PathVariable @RequestParam(name = "Содержание хлопка в %") Integer cotton) {
         List<Socks> list = socksService.getQuantitySocks(size, colors, cotton);
         if (list == null) {
             return ResponseEntity.notFound().build();
