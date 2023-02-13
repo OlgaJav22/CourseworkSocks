@@ -18,17 +18,14 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class SocksServiceImpl implements SocksService {
 
     final private FileSocksService fileSocksService;
-    private static Integer id = 0;
 
     private static List<Socks> socksList = new LinkedList<>();
 
-    Stream<Socks> stream = socksList.stream();
 
     public SocksServiceImpl(FileSocksService fileSocksService) {
         this.fileSocksService = fileSocksService;
@@ -37,11 +34,42 @@ public class SocksServiceImpl implements SocksService {
     @Override
     public Socks addNewSocks(Socks socks) {
         if (socks.getSize() != null && socks.getColors() != null && socks.getCotton() > 0) {
-            socksList.add(socks);
-            saveToFile();
+
+            List<Socks> collect = socksList.stream()
+                    .filter(socks1 -> (socks.getSize().size.equals(socks1.getSize().size)) && (socks.getCotton().equals(socks1.getCotton()))
+                            && (socks.getColors().colors.equals(socks1.getColors().colors))).distinct().toList();
+            if (!collect.isEmpty()) {
+                collect.stream()
+                        .peek(socks1 -> socks1.setQuantity(socks.getQuantity() + socks1.getQuantity()))
+                        .collect(Collectors.toList());
+                saveToFile();
+            } else {
+                socksList.add(socks);
+                saveToFile();
+            }
         }
+
         return socks;
     }
+
+    @Override
+    public List<Socks> moveSocks(Integer size, String colors, Integer cotton, Integer quantity) {
+
+        List<Socks> collect = socksList.stream()
+                .filter(socks -> socks.getSize().size.equals(size) && socks.getCotton().equals(cotton))
+                .filter(socks -> socks.getColors().colors.equals(colors))
+                .filter(socks -> socks.getQuantity() >= (quantity)).toList();
+
+        if (!collect.isEmpty()) {
+            collect.stream()
+                    .peek(socks5 -> socks5.setQuantity(socks5.getQuantity() - quantity))
+                    .collect(Collectors.toUnmodifiableList());
+            saveToFile();
+        }
+        return collect;
+    }
+
+
     @Override
     public List<Socks> deleteSocks(Integer size, String colors, Integer cotton, Integer quantity) {
 
@@ -50,8 +78,10 @@ public class SocksServiceImpl implements SocksService {
                 .filter(socks -> socks.getColors().colors.equals(colors))
                 .filter(socks -> socks.getQuantity() >= (quantity)).toList();
 
-        if (collect.isEmpty()) {
-            socksList.stream().map((socks) -> socks.getQuantity()-quantity).collect(Collectors.toList());
+        if (!collect.isEmpty()) {
+            collect.stream()
+                    .peek(socks5 -> socks5.setQuantity(socks5.getQuantity() - quantity))
+                    .collect(Collectors.toUnmodifiableList());
             saveToFile();
         }
         return collect;
@@ -66,7 +96,6 @@ public class SocksServiceImpl implements SocksService {
 
     @PostConstruct
     private void init() {
-
 //        try {
 //            readFromFile();
 //        } catch (Exception e) {

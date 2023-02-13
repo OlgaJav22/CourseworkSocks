@@ -30,7 +30,7 @@ public class FileSocksServiceImpl implements FileSocksService {
     }
 
     @Override
-    public String readerFromFile() throws FileProcessingException{
+    public String readerFromFile() throws FileProcessingException {
         try {
             return Files.readString(Path.of(socksFilePath, socksFileName));
         } catch (IOException e) {

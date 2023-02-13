@@ -22,45 +22,42 @@ import java.io.FileOutputStream;
 
 public class FileSocksController {
 
-    public class FilesSocksController {
-        private final FileSocksService fileSocksService;
+    private final FileSocksService fileSocksService;
 
-        public FilesSocksController(FileSocksService fileSocksService) {
-            this.fileSocksService = fileSocksService;
-        }
-
-
-        @GetMapping("/export")
-        public ResponseEntity<InputStreamResource> downloadDataFile() throws FileNotFoundException {
-            File file = fileSocksService.getDataFile();
-
-            if (file.exists()) {
-                InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
-                return ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .contentLength(file.length())
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"SocksList.json\"")
-                        .body(inputStreamResource);
-            } else {
-
-                return ResponseEntity.noContent().build();
-            }
-
-        }
-
-        @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-        public ResponseEntity<Void> uploadDataFile(@RequestParam MultipartFile file) {
-            fileSocksService.cleanDataFile();
-            File dataFile = fileSocksService.getDataFile();
-            try (FileOutputStream fos = new FileOutputStream(dataFile)) {
-                IOUtils.copy(file.getInputStream(), fos);
-
-                return ResponseEntity.ok().build();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public FileSocksController(FileSocksService fileSocksService) {
+        this.fileSocksService = fileSocksService;
     }
 
+
+    @GetMapping("/export")
+    public ResponseEntity<InputStreamResource> downloadDataFile() throws FileNotFoundException {
+        File file = fileSocksService.getDataFile();
+
+        if (file.exists()) {
+            InputStreamResource inputStreamResource = new InputStreamResource(new FileInputStream(file));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .contentLength(file.length())
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"SocksList.json\"")
+                    .body(inputStreamResource);
+        } else {
+
+            return ResponseEntity.noContent().build();
+        }
+
+    }
+
+    @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> uploadDataFile(@RequestParam MultipartFile file) {
+        fileSocksService.cleanDataFile();
+        File dataFile = fileSocksService.getDataFile();
+        try (FileOutputStream fos = new FileOutputStream(dataFile)) {
+            IOUtils.copy(file.getInputStream(), fos);
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 }

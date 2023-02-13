@@ -12,6 +12,8 @@ public interface SocksService {
 
     Socks addNewSocks(Socks socks);
 
+    List<Socks> moveSocks(Integer size, String colors, Integer cotton, Integer quantity);
+
     List<Socks> deleteSocks(Integer size, String colors, Integer cotton, Integer quantity);
 
     Collection<Socks> getChecklistSocks();
