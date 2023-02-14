@@ -41,27 +41,21 @@ public class SocksController {
 
     @PostMapping("/add")
     @Operation(summary = "Добавление нового товара", description = "параметры товара: размер, цвет, состав, количество")
-    public ResponseEntity<Socks> addNewSocks(@RequestBody Socks socks) throws Exception {
+    public ResponseEntity<Socks> addNewSocks(@RequestBody Socks socks) {
         Socks socks1 = socksService.addNewSocks(socks);
-        if (socks1 == null) {
-            throw new ServerException("Некорректные данные");
-        } else {
-            return new ResponseEntity<>(socks1, HttpStatus.CREATED);
-        }
+        return new ResponseEntity<>(socks1, HttpStatus.CREATED);
     }
 
     @PutMapping("/move")
     @Operation(summary = " Перемещение товара на склад", description = "вводим необходимые данные: размер, цвет, состав, количество")
-    public ResponseEntity<Void> moveSocks(@RequestParam(name = "Размер:") Integer size1,
-                                          @RequestParam(name = "Цвет") String colors1,
-                                          @RequestParam(name = "% хлопка") Integer cotton1,
-                                          @RequestParam(name = "Количество товара") Integer quantity1) {
+    public ResponseEntity<List<Socks>> moveSocks(@RequestParam(name = "Размер:") Integer size1,
+                                                 @RequestParam(name = "Цвет") String colors1,
+                                                 @RequestParam(name = "% хлопка") Integer cotton1,
+                                                 @RequestParam(name = "Количество товара") Integer quantity1) {
         List<Socks> socksList = socksService.moveSocks(size1, colors1, cotton1, quantity1);
-        if (!socksList.isEmpty()) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
+        return new ResponseEntity<>(socksList, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/minCotton")
     @Operation(summary = "Поиск нужного товара", description = "вводим необходимые данные: размер, цвет, состав")
@@ -69,9 +63,6 @@ public class SocksController {
                                                       @RequestParam(name = "Цвет:") @Parameter(description = "белый, черный, розовый, голубой, красный, разноцветный") String colors,
                                                       @RequestParam(name = "Содержание хлопка в % min") @Parameter(description = "от 0 до 100") Integer cotton) {
         List<Socks> list = socksService.getQuantitySocksMinCotton(size, colors, cotton);
-        if (list == null) {
-            return ResponseEntity.notFound().build();
-        }
         return new ResponseEntity<>(list, HttpStatus.CREATED);
     }
 
@@ -81,9 +72,6 @@ public class SocksController {
                                                       @RequestParam(name = "Цвет:") @Parameter(description = "белый, черный, розовый, голубой, красный, разноцветный") String colors,
                                                       @RequestParam(name = "Содержание хлопка в % max") @Parameter(description = "от 0 до 100") Integer cotton) {
         List<Socks> list1 = socksService.getQuantitySocksMaxCotton(size, colors, cotton);
-        if (list1 == null) {
-            return ResponseEntity.notFound().build();
-        }
         return new ResponseEntity<>(list1, HttpStatus.CREATED);
     }
 
@@ -93,23 +81,17 @@ public class SocksController {
                                                    @RequestParam(name = "Цвет:") @Parameter(description = "белый, черный, розовый, голубой, красный, разноцветный") String colors,
                                                    @RequestParam(name = "Содержание хлопка в % min") @Parameter(description = "от 0 до 100") Integer cotton) {
         Integer total = socksService.getQuantitySocksSize(size, colors, cotton);
-        if (total == null) {
-            return ResponseEntity.notFound().build();
-        }
         return new ResponseEntity<>(total, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/faulty")
     @Operation(summary = "Удаление бракованного товара", description = "вводим необходимые данные: размер, цвет, состав, количество")
-    public ResponseEntity<Void> deleteSocks(@RequestParam(name = "Размер:") Integer size1,
-                                            @RequestParam(name = "Цвет") String colors1,
-                                            @RequestParam(name = "% хлопка") Integer cotton1,
-                                            @RequestParam(name = "Количество товара") Integer quantity1) {
+    public ResponseEntity<List<Socks>> deleteSocks(@RequestParam(name = "Размер:") Integer size1,
+                                                   @RequestParam(name = "Цвет") String colors1,
+                                                   @RequestParam(name = "% хлопка") Integer cotton1,
+                                                   @RequestParam(name = "Количество товара") Integer quantity1) {
         List<Socks> socksList = socksService.deleteSocks(size1, colors1, cotton1, quantity1);
-        if (!socksList.isEmpty()) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.notFound().build();
+        return new ResponseEntity<>(socksList, HttpStatus.CREATED);
     }
 
     @GetMapping("/checklist")
@@ -117,11 +99,7 @@ public class SocksController {
             description = "выводит сразу весь товар в наличии")
     public ResponseEntity<Object> getChecklistSocks() throws Exception {
         Collection<Socks> socks = socksService.getChecklistSocks();
-        if (socks == null) {
-            throw new IllegalArgumentException("Данные отсутствуют");
-        } else {
-            return new ResponseEntity<>(socks, HttpStatus.CREATED);
-        }
+        return new ResponseEntity<>(socks, HttpStatus.CREATED);
     }
 
 
